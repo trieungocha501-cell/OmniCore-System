@@ -1,0 +1,59 @@
+﻿<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đánh dấu số trong dãy</title>
+    <style>
+        body { font-family: sans-serif; margin: 30px; line-height: 1.6; }
+        input { padding: 10px; width: 300px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 4px; }
+        #displayArea { margin-top: 20px; font-size: 1.2rem; letter-spacing: 5px; border: 1px dashed #aaa; padding: 15px; min-height: 30px; }
+        .highlight { color: white; background-color: #ff4757; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Đánh dấu số cần tìm</h2>
+
+    <p>1. Nhập dãy số (cách nhau bằng dấu cách):</p>
+    <input type="text" id="inputArray" placeholder="Ví dụ: 10 25 30 45 50">
+
+    <p>2. Nhập số cần tìm:</p>
+    <input type="number" id="searchTarget" placeholder="Số cần tìm...">
+    
+    <button onclick="markNumber()">Tìm và Đánh dấu</button>
+
+    <div id="displayArea">Kết quả sẽ hiển thị ở đây...</div>
+
+    <script>
+        function markNumber() {
+            const arrayString = document.getElementById('inputArray').value.trim();
+            const target = document.getElementById('searchTarget').value.trim();
+            const displayArea = document.getElementById('displayArea');
+
+            if (arrayString === "" || target === "") {
+                displayArea.innerHTML = "<span style='color:orange'>Vui lòng nhập đủ dãy số và số cần tìm!</span>";
+                return;
+            }
+
+            // Chuyển chuỗi thành mảng
+            const numbers = arrayString.split(/\s+/);
+            
+            // Duyệt mảng và tạo HTML để hiển thị
+            const formattedHTML = numbers.map(num => {
+                if (num === target) {
+                    return `<span class="highlight">${num}</span>`;
+                }
+                return num;
+            }).join(" ");
+
+            // Kiểm tra xem có số nào được đánh dấu không
+            if (numbers.includes(target)) {
+                displayArea.innerHTML = "Vị trí tìm thấy: <br><br>" + formattedHTML;
+            } else {
+                displayArea.innerHTML = formattedHTML + "<br><br><span style='color:red'>Không tìm thấy số này trong dãy.</span>";
+            }
+        }
+    </script>
+
+</body>
+</html>
