@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Hệ Thống Giải Mã Cyber - Trang Chủ</title>
     <style>
-        /* THANH MENU ĐIỀU HƯỚNG */
+        /* THANH MENU - ĐÃ LOẠI BỎ GAME */
         .navbar { background: #111; padding: 10px 20px; border-bottom: 2px solid #00ff00; display: flex; align-items: center; font-family: sans-serif; position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: #00ff00; text-decoration: none; font-weight: bold; margin-right: 20px; font-size: 14px; }
         .dropdown { position: relative; display: inline-block; }
@@ -14,7 +14,7 @@
         .dropdown-content a:hover { background-color: #004400; }
         .dropdown:hover .dropdown-content { display: block; }
 
-        /* GIAO DIỆN GỐC */
+        /* GIAO DIỆN CHÍNH */
         :root { --neon: #00ff00; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; }
         .container { max-width: 900px; margin: 30px auto; border: 2px solid var(--neon); padding: 20px; box-shadow: 0 0 20px var(--neon); background: #050505; border-radius: 15px; }
@@ -59,7 +59,7 @@
     </div>
 
     <script>
-        // LOGIC CHUẨN TỪ LỊCH SỬ CỦA BẠN
+        // FULL LOGIC V8 CHUẨN - KHÔNG CÒN LỖI ĐỎ
         function v8Decode() {
             let input = document.getElementById('decodeInp').value.trim();
             if (!input) return;
@@ -68,4 +68,30 @@
                 if (w === "7674") return "của";
                 if (w === "70^1") return "tôi";
                 let t = w.replace(/74/g, 'th').replace(/-13/g, 'đ').replace(/6\*/g, 'g').replace(/1\//g, 'y').replace(/13/g, 'b').replace(/4\^/g, 'â').replace(/3\^/g, 'ê').replace(/0\^/g, 'ô');
-                const map = {'4':'a', '3':'m', '5':'n', '6':'u', '0':'o
+                const map = {'4':'a', '3':'m', '5':'n', '6':'u', '0':'o', '1':'i', '7':'t'};
+                let out = "";
+                for (let i = 0; i < t.length; i++) {
+                    if (t[i] === '7' && i > 0) out += 't'; 
+                    else out += map[t[i]] || t[i];
+                }
+                out = out.replace(/â'/g, 'ấ').replace(/ê'/g, 'ế').replace(/a'/g, 'á').replace(/ô'/g, 'ố').replace(/u'/g, 'ú').replace(/i'/g, 'í')
+                         .replace(/â\./g, 'ậ').replace(/ê\./g, 'ệ').replace(/a\./g, 'ạ').replace(/ô\./g, 'ộ').replace(/u\./g, 'ụ').replace(/i\./g, 'ị');
+                return out;
+            }).join(" ");
+            document.getElementById('decodeRes').innerText = res;
+        }
+
+        function v8Encode() {
+            let input = document.getElementById('encodeInp').value;
+            if (!input) return;
+            let res = input.toLowerCase()
+                .replace(/th/g, '74').replace(/đ/g, '-13').replace(/g/g, '6*').replace(/y/g, '1/').replace(/b/g, '13')
+                .replace(/ấ/g, "â'").replace(/ế/g, "ê'").replace(/á/g, "a'").replace(/ố/g, "ô'").replace(/ú/g, "u'").replace(/í/g, "i'")
+                .replace(/ậ/g, "â.").replace(/ệ/g, "ê.").replace(/ạ/g, "a.").replace(/ộ/g, "ô.").replace(/ụ/g, "u.").replace(/ị/g, "i.")
+                .replace(/â/g, '4^').replace(/ê/g, '3^').replace(/ô/g, '0^')
+                .replace(/a/g, '4').replace(/m/g, '3').replace(/n/g, '5').replace(/u/g, '6').replace(/o/g, '0').replace(/i/g, '1').replace(/t/g, '7');
+            document.getElementById('encodeRes').innerText = res;
+        }
+    </script>
+</body>
+</html>
