@@ -6,7 +6,7 @@
     <style>
         /* THANH MENU ĐIỀU HƯỚNG */
         .navbar { background: #111; padding: 10px 20px; border-bottom: 2px solid #00ff00; display: flex; align-items: center; font-family: sans-serif; position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: #00ff00; text-decoration: none; font-weight: bold; margin-right: 20px; font-size: 14px; }
+        .nav-link { color: #00ff00; text-decoration: none; font-weight: bold; margin-right: 20px; font-size: 14px; display: flex; align-items: center; gap: 5px; }
         .dropdown { position: relative; display: inline-block; }
         .dropbtn { background: #222; color: #00ff00; padding: 8px 15px; border: 1px solid #00ff00; cursor: pointer; font-weight: bold; font-size: 13px; }
         .dropdown-content { display: none; position: absolute; background-color: #000; min-width: 180px; border: 1px solid #00ff00; }
@@ -14,7 +14,7 @@
         .dropdown-content a:hover { background-color: #004400; }
         .dropdown:hover .dropdown-content { display: block; }
 
-        /* GIAO DIỆN CHÍNH */
+        /* GIAO DIỆN CHÍNH NEON */
         :root { --neon: #00ff00; --bg: #000; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; }
         .container { max-width: 900px; margin: 30px auto; border: 2px solid var(--neon); padding: 20px; box-shadow: 0 0 20px var(--neon); background: #050505; border-radius: 15px; }
@@ -30,7 +30,7 @@
 <body>
 
     <div class="navbar">
-        <a href="index.html" class="nav-link">🏠 TRANG CHỦ</a>
+        <a href="index.html" class="nav-link">💻 TRANG CHỦ</a>
         <div class="dropdown">
             <button class="dropbtn">DANH MỤC TÍNH NĂNG ▾</button>
             <div class="dropdown-content">
@@ -59,7 +59,6 @@
     </div>
 
     <script>
-        // LOGIC V8 CHUẨN - ĐÃ KHỚP ID VỚI HTML
         function v8Decode() {
             let input = document.getElementById('inputCode').value.trim();
             if (!input) return;
