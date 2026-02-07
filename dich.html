@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trình dịch đa ngôn ngữ(20+ ngôn ngữ)</title>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); background-color: #fff; }
+        h2 { text-align: center; color: #333; }
+        label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; }
+        
+        /* Ô nhập liệu có Mic */
+        .input-group { position: relative; width: 100%; }
+        textarea { width: 100%; height: 100px; padding: 10px; padding-right: 45px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; resize: vertical; }
+        .mic-btn { position: absolute; right: 10px; top: 10px; background: none; border: none; cursor: pointer; font-size: 24px; color: #007bff; }
+        .mic-active { color: red; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        select { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        button#main-btn { background: #007bff; color: white; border: none; padding: 15px; cursor: pointer; border-radius: 5px; margin-top: 20px; font-weight: bold; width: 100%; font-size: 16px; text-transform: uppercase; }
+        
+        #status { color: #666; font-style: italic; margin-top: 10px; height: 20px; text-align: center; }
+        .result { background: #f9f9f9; padding: 15px; border-left: 5px solid #007bff; min-height: 40px; margin-top: 10px; white-space: pre-wrap; border-radius: 0 5px 5px 0; font-size: 18px; }
+
+        /* Lịch sử dịch */
+        .history-box { margin-top: 30px; border-top: 2px dashed #eee; padding-top: 15px; }
+        .history-item { font-size: 14px; background: #f1f1f1; padding: 8px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid #ccc; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Trình dịch đa ngôn ngữ(20+ ngôn ngữ)</h2>
+
+    <label>Nhập văn bản:</label>
+    <div class="input-group">
+        <textarea id="inputText" placeholder="Nhập nội dung hoặc bấm Mic để nói..."></textarea>
+        <button class="mic-btn" id="micBtn" onclick="startDictation()">🎤</button>
+    </div>
+
+    <label>Chọn ảnh chứa chữ</label>
+    <input type="file" id="imageInput" accept="image/*">
+
+    <label>Chọn ngôn ngữ đích:</label>
+    <select id="targetLang">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">Tiếng Anh</option>
+        <option value="ja">Tiếng Nhật</option>
+        <option value="zh-CN">Tiếng Trung (Giản thể)</option>
+        <option value="zh-TW">Tiếng Trung (Phồn thể)</option>
+        <option value="de">Tiếng Đức</option>
+        <option value="ko">Tiếng Hàn</option>
+        <option value="fr">Tiếng Pháp</option>
+        <option value="ru">Tiếng Nga</option>
+        <option value="es">Tiếng Tây Ban Nha</option>
+        <option value="th">Tiếng Thái</option>
+        <option value="lo">Tiếng Lào</option>
+        <option value="km">Tiếng Khmer</option>
+        <option value="id">Tiếng Indonesia</option>
+        <option value="ms">Tiếng Mã Lai</option>
+        <option value="it">Tiếng Ý</option>
+        <option value="pt">Tiếng Bồ Đào Nha</option>
+        <option value="ar">Tiếng Ả Rập</option>
+        <option value="hi">Tiếng Ấn Độ (Hindi)</option>
+        <option value="tr">Tiếng Thổ Nhĩ Kỳ</option>
+        <option value="nl">Tiếng Hà Lan</option>
+        <option value="pl">Tiếng Ba Lan</option>
+        <option value="sv">Tiếng Thụy Điển</option>
+        <option value="el">Tiếng Hy Lạp</option>
+    </select>
+
+    <button id="main-btn" onclick="processTranslation()">DỊCH NGAY</button>
+
+    <div id="status"></div>
+    <h3>Kết quả:</h3>
+    <div class="result" id="output"></div>
+
+    <div class="history-box" id="historyBox">
+        <label>Lịch sử gần đây:</label>
+        <div id="historyList"></div>
+    </div>
+
+    <script>
+        function startDictation() {
+            if (window.hasOwnProperty('webkitSpeechRecognition')) {
+                var recognition = new webkitSpeechRecognition();
+                recognition.lang = "vi-VN";
+                const micIcon = document.getElementById('micBtn');
+                micIcon.classList.add('mic-active');
+                recognition.start();
+
+                recognition.onresult = function(e) {
+                    document.getElementById('inputText').value = e.results[0][0].transcript;
+                    micIcon.classList.remove('mic-active');
+                    recognition.stop();
+                };
+                recognition.onerror = () => { micIcon.classList.remove('mic-active'); recognition.stop(); };
+            } else {
+                alert("Trình duyệt không hỗ trợ Mic.");
+            }
+        }
+
+        async function processTranslation() {
+            const textInput = document.getElementById('inputText').value;
+            const imageInput = document.getElementById('imageInput').files[0];
+            const targetLang = document.getElementById('targetLang').value;
+            const outputDiv = document.getElementById('output');
+            const statusDiv = document.getElementById('status');
+
+            let textToTranslate = textInput;
+
+            if (imageInput && !textInput) {
+                statusDiv.innerText = "Đang dịch ảnh...";
+                try {
+                    const result = await Tesseract.recognize(imageInput, 'eng+vie+jpn+chi_sim+deu');
+                    textToTranslate = result.data.text;
+                    document.getElementById('inputText').value = textToTranslate;
+                } catch (e) {
+                    statusDiv.innerText = "";
+                    outputDiv.innerText = "không thể dịch ảnh";
+                    return;
+                }
+            }
+
+            if (!textToTranslate || !textToTranslate.trim()) {
+                alert("Vui lòng nhập dữ liệu!");
+                return;
+            }
+
+            statusDiv.innerText = "Đang dịch...";
+            try {
+                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(textToTranslate)}`);
+                const data = await res.json();
+                let translated = "";
+                data[0].forEach(item => { if (item[0]) translated += item[0]; });
+
+                outputDiv.innerText = translated;
+                statusDiv.innerText = "";
+                addHistory(textToTranslate, translated);
+            } catch (error) {
+                outputDiv.innerText = "lỗi,không thể dịch";
+                statusDiv.innerText = "";
+            }
+        }
+
+        function addHistory(original, translated) {
+            const list = document.getElementById('historyList');
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerText = `${original.substring(0,20)}... → ${translated.substring(0,20)}...`;
+            item.onclick = () => { document.getElementById('inputText').value = original; };
+            list.prepend(item);
+            if (list.childNodes.length > 5) list.removeChild(list.lastChild);
+        }
+    </script>
+</body>
+</html>
