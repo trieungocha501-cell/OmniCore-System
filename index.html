@@ -94,6 +94,26 @@
         function v8Encode() {
             let input = document.getElementById('inputText').value;
             if (!input) return;
+            
+            let words = input.toLowerCase().split(/\s+/);
+            let result = words.map(w => {
+                if (w === "của") return "7674";
+                if (w === "tôi") return "70^1";
+                
+                let t = w;
+                // Thay thế dấu tiếng Việt sang ký tự V8
+                t = t.replace(/ấ/g, "â'").replace(/ế/g, "ê'").replace(/á/g, "a'").replace(/ố/g, "ô'").replace(/ú/g, "u'").replace(/í/g, "i'")
+                     .replace(/ậ/g, "â.").replace(/ệ/g, "ê.").replace(/ạ/g, "a.").replace(/ộ/g, "ô.").replace(/ụ/g, "u.").replace(/ị/g, "i.");
+                
+                // Thay thế các cụm ký tự đặc biệt
+                t = t.replace(/th/g, '74').replace(/đ/g, '-13').replace(/g
+            }).join(" ");
+            document.getElementById('decodeResult').innerText = result;
+        }
+
+        function v8Encode() {
+            let input = document.getElementById('inputText').value;
+            if (!input) return;
             let res = input.toLowerCase()
                 .replace(/th/g, '74').replace(/đ/g, '-13').replace(/g/g, '6*').replace(/y/g, '1/').replace(/b/g, '13')
                 .replace(/ấ/g, "â'").replace(/ế/g, "ê'").replace(/á/g, "a'").replace(/ố/g, "ô'").replace(/ú/g, "u'").replace(/í/g, "i'")
@@ -105,3 +125,4 @@
     </script>
 </body>
 </html>
+
